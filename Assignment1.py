@@ -25,11 +25,23 @@ def main():
 
     # plot different classes against one another
     # scatter plot of petal width vs petal length color coded by species
-    fig1 = px.scatter(iris_df, x="petal.width", y="petal.length", color="species")
+    fig1 = px.scatter(
+        iris_df,
+        x="petal.width",
+        y="petal.length",
+        color="species",
+        title="Petal Width vs Petal Length",
+    )
     fig1.show()
 
     # violin plot of sepal length color coded by species
-    fig2 = px.violin(iris_df, x="sepal.length", box=True, color="species")
+    fig2 = px.violin(
+        iris_df,
+        x="sepal.length",
+        box=True,
+        color="species",
+        title="Sepal Length by Species",
+    )
     fig2.show()
 
     # scatter matrix of all features in the data
@@ -37,11 +49,12 @@ def main():
         iris_df,
         dimensions=["sepal.length", "sepal.width", "petal.length", "petal.width"],
         color="species",
+        title="Scatter matrix of all features",
     )
     fig3.show()
 
     # boxplot of petal width for each species
-    fig4 = px.box(iris_df, x="species", y="petal.width")
+    fig4 = px.box(iris_df, x="species", y="petal.width", title="Petal Width")
     fig4.show()
 
     # density heatmap of petal width vs petal length
@@ -51,6 +64,7 @@ def main():
         y="petal.length",
         marginal_x="rug",
         marginal_y="histogram",
+        title="Petal Width vs Petal Length",
     )
     fig5.show()
 
