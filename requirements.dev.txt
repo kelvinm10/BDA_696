@@ -176,7 +176,7 @@ platformdirs==2.3.0
     # via
     #   black
     #   virtualenv
-pre-commit==2.15.0
+pre-commit==2.9.2
     # via -r requirements.dev.in
 prometheus-client==0.11.0
     # via
