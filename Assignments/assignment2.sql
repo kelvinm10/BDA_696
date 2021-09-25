@@ -79,8 +79,7 @@ ALTER TABLE game
 ADD INDEX IF NOT EXISTS(local_date);
 
 
-ALTER TABLE batter_counts 
-ADD INDEX IF NOT EXISTS (batter);
+
 
 
 -- CREATE games and hitters temp table to use for 100 DAY rolling avg
