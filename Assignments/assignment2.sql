@@ -9,6 +9,7 @@ USE baseball;
  * if they had no atBats, then they do not have a batting average
  */
 DROP TABLE IF EXISTS historic_batting_average;
+
 CREATE TABLE historic_batting_average
 SELECT batter, 
 CASE 
@@ -74,12 +75,12 @@ GROUP BY batter, local_date;		-- want to group by batter first, then date
 SELECT * FROM rolling_batting_average LIMIT 0,1100;
 
 
--- ALTER TABLE game 
--- ADD INDEX date_idx(local_date)
+ALTER TABLE game 
+ADD INDEX IF NOT EXISTS(local_date);
 
 
--- ALTER TABLE batter_counts 
--- ADD INDEX batter_idx(batter)
+ALTER TABLE batter_counts 
+ADD INDEX IF NOT EXISTS (batter);
 
 
 -- CREATE games and hitters temp table to use for 100 DAY rolling avg
@@ -92,9 +93,9 @@ JOIN game g ON g.game_id = bc.game_id
 GROUP BY batter, dates;
 
 -- add indexes for faster querying
- -- ALTER TABLE games_and_hitters
- -- ADD INDEX date_idx(dates),
--- ADD INDEX batter_idx(batter)
+ ALTER TABLE games_and_hitters
+ ADD INDEX IF NOT EXISTS (dates),
+ ADD INDEX IF NOT EXISTS (batter);
 
 
 /*CREATE temp table of cross join between all DATES and batters, so now 
