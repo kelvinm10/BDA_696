@@ -45,9 +45,11 @@ GROUP BY batter, YEAR (local_date);		-- want to group by batter first then year
 
 SELECT * FROM annual_batting_average LIMIT 0,20;
 
-/* ************** 30 DAY ROLLING BATTING AVERAGE **************
+
+-- 100 GAME ROLLING BATTING AVERAGE ** (100 DAY IS DONE BELOW)**
+/* ************** 100 GAME ROLLING BATTING AVERAGE **************
  * this query will create a new table "rolling_batting_average" which 
- * contains every player's 30 day rolling batting average. The "batter_counts"
+ * contains every player's 100 GAME rolling batting average. The "batter_counts"
  * and "game" tables are joined to combine the information such as hits, atbats, batter,
  * and local_date, which will be used to calculate the rolling batting average
  */
@@ -72,6 +74,74 @@ GROUP BY batter, local_date;		-- want to group by batter first, then date
 SELECT * FROM rolling_batting_average LIMIT 0,1100;
 
 
+-- ALTER TABLE game 
+-- ADD INDEX date_idx(local_date)
+
+
+-- ALTER TABLE batter_counts 
+-- ADD INDEX batter_idx(batter)
+
+
+-- CREATE games and hitters temp table to use for 100 DAY rolling avg
+DROP TABLE IF EXISTS games_and_hitters;
+
+CREATE TEMPORARY TABLE games_and_hitters
+SELECT batter, Hit, atBat, DATE(local_date) as dates
+FROM batter_counts bc 
+JOIN game g ON g.game_id = bc.game_id 
+GROUP BY batter, dates;
+
+-- add indexes for faster querying
+ -- ALTER TABLE games_and_hitters
+ -- ADD INDEX date_idx(dates),
+-- ADD INDEX batter_idx(batter)
+
+
+/*CREATE temp table of cross join between all DATES and batters, so now 
+rows contain all dates, rather than just the dates where the player had
+a game
+*/
+DROP TEMPORARY TABLE IF EXISTS batters_dates;
+
+CREATE TEMPORARY TABLE batters_dates
+SELECT DISTINCT range_of_dates, batter
+FROM date_range dr
+CROSS JOIN batter_counts bc 
+LIMIT 0,25000;							-- Had to place a limit, because this takes a very long time for entire cross join
+										-- Im sure there is a more efficient way, but was not able to find one
+
+/*
+ * CREATE temp table which contains all the information needed to calculate the final
+ * 100 DAY rolling average
+ */
+DROP TABLE IF EXISTS final_rolling;
+
+CREATE TEMPORARY TABLE final_rolling
+SELECT range_of_dates, bd.batter, COALESCE(atBat,0) as "atBat", COALESCE (Hit,0) as "Hit"
+FROM batters_dates bd
+LEFT JOIN games_and_hitters gh ON gh.dates = bd.range_of_dates
+GROUP BY bd.batter, range_of_dates;
+
+/* ************** 100 DAY ROLLING BATTING AVERAGE **************
+ * this query will create a new table "final_100day_rolling_avg" which 
+ * contains every player's 100 day rolling batting average. 
+ */
+
+DROP TABLE IF EXISTS final_100day_rolling_avg;
+
+CREATE TABLE final_100day_rolling_avg
+SELECT batter, Hit, atBat,
+CASE 
+WHEN atBat = 0			-- Need to check for when dividing by 0, in this case, NULL will be value, and avg will be the same as last non null row above
+THEN NULL			
+ELSE
+SUM(Hit) OVER(PARTITION BY batter ORDER BY batter, range_of_dates ROWS BETWEEN 100 PRECEDING AND CURRENT ROW) / 
+SUM(atBat) OVER(PARTITION BY batter ORDER BY batter, range_of_dates ROWS BETWEEN 100 PRECEDING AND CURRENT ROW)
+END AS 100_day_rolling_avg, range_of_dates
+FROM final_rolling;
+
+
+SELECT * FROM final_100day_rolling_avg;
 
 
 
