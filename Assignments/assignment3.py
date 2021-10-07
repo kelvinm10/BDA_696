@@ -61,31 +61,20 @@ def main():
         .master("local")
         .getOrCreate()
     )
-    # ask to input password for user's mariadb server
-    key = input("MariaDb Password: ")
-    # Load batter counts df
-    batter_counts_df = (
+
+    # connect to mariadb with spark and load batter_counts and game
+    url = "jdbc:mysql://localhost:3306/baseball"
+    tablename_list = ["batter_counts", "game"]
+    reader = (
         spark.read.format("jdbc")
-        .option("url", "jdbc:mysql://localhost:3306/baseball")
-        .option("driver", "org.mariadb.jdbc.Driver")
-        .option("dbtable", "batter_counts")
+        .option("url", url)
         .option("user", "root")
-        .option("password", key)
-        .load()
+        .option("password", "")
     )
-    # load game df
-    game_df = (
-        spark.read.format("jdbc")
-        .option("url", "jdbc:mysql://localhost:3306/baseball")
-        .option("driver", "org.mariadb.jdbc.Driver")
-        .option("dbtable", "game")
-        .option("user", "root")
-        .option("password", key)
-        .load()
-    )
+    batter_counts_df = reader.option("dbtable", tablename_list[0]).load()
+    game_df = reader.option("dbtable", tablename_list[1]).load()
     batter_counts_df.persist(StorageLevel.DISK_ONLY)
     game_df.persist(StorageLevel.DISK_ONLY)
-
     # Create transformer instance, then transform the dataframes into one rolling_df
     # which contains the 100 day rolling average
     transformer = rollingTransform()
