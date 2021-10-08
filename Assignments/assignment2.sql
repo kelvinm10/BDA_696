@@ -90,3 +90,9 @@ SELECT
 	JOIN t_rolling_lookup rl2 ON rl1.batter = rl2.batter
 		AND rl2.local_date BETWEEN DATE_SUB(rl1.local_date, INTERVAL 100 DAY) AND rl1.local_date
 	GROUP BY rl1.batter, rl1.game_id, rl1.local_date;
+
+
+
+
+
+
