@@ -15,13 +15,16 @@ def main():
     )
 
     # connect to mariadb with spark and load batter_counts and game
+    # First, ask for credentials in order to log into mariadb server
+    username = input("MariaDB username: ")
+    password = input("MariaDB password: ")
     url = "jdbc:mysql://localhost:3306/baseball"
     tablename_list = ["batter_counts", "game"]
     reader = (
         spark.read.format("jdbc")
         .option("url", url)
-        .option("user", "root")
-        .option("password", "")
+        .option("user", username)
+        .option("password", password)
     )
     # Read batter counts table, then create temp view
     batter_counts_df = reader.option("dbtable", tablename_list[0]).load()
