@@ -6,9 +6,7 @@ from rollingTransform import rollingTransform
 
 
 def main():
-    jar_path = (
-        "/.venv/lib/python3.9/site-packages/pyspark/jars/mariadb-java-client-2.7.4.jar"
-    )
+    jar_path = "/data/mariadb-java-client-2.7.4.jar"
     # get path of jar file on system
     spark = (
         SparkSession.builder.master("local[*]")
