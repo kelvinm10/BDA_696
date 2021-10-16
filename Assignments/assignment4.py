@@ -241,7 +241,7 @@ def main(dataframe, predictors, response):
     diff_weighted = []
     diff_unweighted = []
     folder = "../assignment4Plots/"
-    file_prefix = "file://"
+    # file_prefix = "file://"
     for i in predictors:
         # store strings for all the plots
         eda_plot_string = "eda_" + i.replace(" ", "") + ".html"
@@ -269,27 +269,13 @@ def main(dataframe, predictors, response):
             forest_rankings.append(i_forest_ranking)
 
             # write html files of figures, then append to a list of each
+            project_path = "/BDA_696/"
             eda_fig.write_html(folder + eda_plot_string)
             reg_fig.write_html(folder + reg_plot_string)
             plot.write_html(folder + diff_plot_string)
-            eda_plots.append(
-                file_prefix
-                + os.path.abspath(os.path.join("", os.pardir))
-                + "/assignment4Plots/"
-                + eda_plot_string
-            )
-            reg_plots.append(
-                file_prefix
-                + os.path.abspath(os.path.join("", os.pardir))
-                + "/assignment4Plots/"
-                + reg_plot_string
-            )
-            diff_plots.append(
-                file_prefix
-                + os.path.abspath(os.path.join("", os.pardir))
-                + "/assignment4Plots/"
-                + diff_plot_string
-            )
+            eda_plots.append(project_path + "/assignment4Plots/" + eda_plot_string)
+            reg_plots.append(project_path + "/assignment4Plots/" + reg_plot_string)
+            diff_plots.append(project_path + "/assignment4Plots/" + diff_plot_string)
 
         # CONDITION WHERE PREDICTOR IS CATEGORICAL
         # 1) plot predictor vs response using correct plot
@@ -305,18 +291,8 @@ def main(dataframe, predictors, response):
             # write html files of plots and append to correct list
             eda_fig.write_html(folder + eda_plot_string)
             plot.write_html(folder + diff_plot_string)
-            eda_plots.append(
-                file_prefix
-                + os.path.abspath(os.path.join("", os.pardir))
-                + "/assignment4Plots/"
-                + eda_plot_string
-            )
-            diff_plots.append(
-                file_prefix
-                + os.path.abspath(os.path.join("", os.pardir))
-                + "/assignment4Plots/"
-                + diff_plot_string
-            )
+            eda_plots.append(project_path + "/assignment4Plots/" + eda_plot_string)
+            diff_plots.append(project_path + "/assignment4Plots/" + diff_plot_string)
 
             # append null for t values, p values, and random Forest rankings as these are categorical predictors
             t_values.append(None)
