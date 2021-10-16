@@ -10,6 +10,10 @@ from plotly.subplots import make_subplots
 from sklearn import datasets
 from sklearn.ensemble import RandomForestClassifier
 
+# make a directory to hold plot html files if it doesnt exist
+if not os.path.exists("../assignment4Plots"):
+    os.makedirs("../assignment4Plots")
+
 
 def is_continuous(df, column_name):
     # check to see if column is int or float and has more than 2 unique values
