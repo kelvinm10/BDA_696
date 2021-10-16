@@ -15,6 +15,7 @@ if not os.path.exists("../assignment4Plots"):
     os.makedirs("../assignment4Plots")
 
 
+# function to check if a pandas column is categorical or continuous
 def is_continuous(df, column_name):
     # check to see if column is int or float and has more than 2 unique values
     if (
@@ -28,6 +29,7 @@ def is_continuous(df, column_name):
         return False
 
 
+# function to plot continuous predictors
 def plot_continuous(df, series, response):
     # if response is continuous, scatterplot with trend line
     if is_continuous(df, response):
@@ -39,6 +41,7 @@ def plot_continuous(df, series, response):
     return fig
 
 
+# function to plot categorical predictors
 def plot_categorical(df, series, response):
     # if response is continuous, violin plot grouped by predictor
     if is_continuous(df, response):
@@ -50,6 +53,15 @@ def plot_categorical(df, series, response):
     return fig
 
 
+# this function performs either a linear or logistic regression (based on response being categorical or continuous)
+# Parameters:
+# df = pandas dataframe
+# col = string name of column to perform regression on
+# response = string name of response variable
+# RETURNS:
+# fig = plot of linear or logistic regression
+# t-value = t value of regression
+# p-value = p value of regression
 def regression(df, col, response):
     # if response is continuous, linear regression
     if is_continuous(df, response):
@@ -105,6 +117,14 @@ def regression(df, col, response):
 
 
 # this function will invoke the difference with mean of response formula as well as the plot
+# parameters:
+# df = dataframe
+# predictor = string (name of predictor)
+# response = string (name of response)
+# weighted = Boolean (True if using weighted difference, false otherwise)
+# RETURNS:
+# result = numeric value of difference with mean of response
+# fig = plot of difference with mean of response
 def diff_mean_response(df, predictor, response, weighted):
 
     # first, need to create the bins, but this will be different based on if predictor is continuous or not:
@@ -211,16 +231,24 @@ def diff_mean_response(df, predictor, response, weighted):
     return result, fig
 
 
+# function to get the random forest variable importance
+# parameters:
+# X_train: array of all feature values
+# y_train: array of all response values
+# ** Returns **
+# list of numbers pertaining to the importance of each predictor
 def random_forest_variable_importance(X_train, y_train):
     rf = RandomForestClassifier()
     rf.fit(X_train, y_train)
     return rf.feature_importances_
 
 
-def make_clickable(val):
-    return '<a href="{}">{}</a>'.format(val, val)
-
-
+# main Parameters:
+# dataframe: pandas dataframe
+# predictors: list of strings containing the names of the predictors in "dataframe"
+# reponse: name of the response variable in a string
+# ** Returns **
+# "finalTable.html" in assignments folder which contains all graphs and values
 def main(dataframe, predictors, response):
     # create a random seed for reproducible results (especially for random forest)
     np.random.seed(100)
@@ -329,24 +357,7 @@ def main(dataframe, predictors, response):
             "RF Variable Importance",
         ],
     )
-    result.style.format({"EDA Plots": make_clickable})
-    return result
-
-
-if __name__ == "__main__":
-    # print("TESTING")
-    # data = datasets.load_breast_cancer()
-    # boston_df = pd.DataFrame(data.data, columns=data.feature_names)
-    # boston_df["target"] = data.target
-    # main(boston_df, data.feature_names, "target")
-
-    data = datasets.load_breast_cancer()
-    df = pd.DataFrame(data.data, columns=data.feature_names)
-    df["target"] = data.target
-    res = main(df, data.feature_names, "target")
-    pd.set_option("display.max_rows", None, "display.max_columns", None)
-    pd.options.display.max_colwidth = 100
-    res.to_html(
+    result.to_html(
         "finalTable.html",
         formatters={
             "EDA Plots": lambda x: f'<a href="{x}">{x}</a>',
@@ -355,3 +366,18 @@ if __name__ == "__main__":
         },
         escape=False,
     )
+    return
+
+
+if __name__ == "__main__":
+    # main function takes in pandas dataframe, list of predictors, and response
+    # produces "finalTable.html" file which can be opened on a browser
+    # this file is located in the "Assignments" folder
+
+    # below is an example ran on the breast cancer dataset provided by sklearn
+    data = datasets.load_breast_cancer()
+    df = pd.DataFrame(data.data, columns=data.feature_names)
+    df["target"] = data.target
+    pd.set_option("display.max_rows", None, "display.max_columns", None)
+    pd.options.display.max_colwidth = 100
+    main(df, data.feature_names, "target")
