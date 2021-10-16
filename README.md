@@ -19,3 +19,7 @@
 # Run `pre-commit` locally.
 
 `pre-commit run --all-files`
+
+## Assignment 4:
+- main function takes in 3 parameters: pandas dataset, list of predictor names (strings), and name of response (string)
+- outputs a "finalTable.html" file which can be opened on a browser and all information is in the table
