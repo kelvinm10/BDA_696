@@ -1,4 +1,3 @@
-import math
 import os
 
 import numpy as np
@@ -20,11 +19,13 @@ def is_continuous(df, column_name):
     # check to see if column is int or float and has more than 2 unique values
     if (
         df[column_name].apply(isinstance, args=[(int, float)]).all()
-        and df[column_name].nunique() > 2
+        and df[column_name].nunique() > 5
     ):
         return True
 
     # else, column is not continuous
+    elif df[column_name].apply(isinstance, arge=[(str, object)]).all():
+        return False
     else:
         return False
 
@@ -131,9 +132,7 @@ def diff_mean_response(df, predictor, response, weighted):
     # if continuous, then # of bins is the square root of the total number of observations
     # if not continuous, then categorical, so bins will be # of categories - 1 and bin each category in own bin
     if is_continuous(df, predictor):
-        holder, bin_create = np.histogram(
-            df[predictor], bins=math.ceil(np.sqrt(len(df[predictor])))
-        )
+        holder, bin_create = np.histogram(df[predictor], bins=10)
     else:
         holder, bin_create = np.histogram(
             df[predictor], bins=len(np.unique(df[predictor])) - 1
@@ -193,7 +192,10 @@ def diff_mean_response(df, predictor, response, weighted):
         diff_bin_pop.append(i - pop_mean)
 
     # divide running sum by the number of bins, which is the max of all the bin numbers to get final result
-    result = running_sum / max(np.unique(bin_numbers))
+    if weighted:
+        result = running_sum
+    else:
+        result = running_sum / max(np.unique(bin_numbers))
 
     # now plot this
     fig = make_subplots(specs=[[{"secondary_y": True}]])
