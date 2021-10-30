@@ -24,7 +24,7 @@ def is_continuous(df, column_name):
         return True
 
     # else, column is not continuous
-    elif df[column_name].apply(isinstance, arge=[(str, object)]).all():
+    elif df[column_name].apply(isinstance, args=[(str)]).all():
         return False
     else:
         return False
