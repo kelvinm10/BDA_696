@@ -5,3 +5,4 @@ scikit-learn
 pyspark
 pyspark-stubs
 statsmodels
+seaborn
