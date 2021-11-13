@@ -132,10 +132,8 @@ def diff_mean_response(df, predictor, response, weighted):
     # if continuous, then # of bins is the square root of the total number of observations
     # if not continuous, then categorical, so bins will be # of categories - 1 and bin each category in own bin
     if is_continuous(df, predictor):
-        print(df[predictor].dtype)
         holder, bin_create = np.histogram(df[predictor], bins=10)
     else:
-        print(df[predictor].dtype)
         holder, bin_create = np.histogram(
             df[predictor], bins=len(np.unique(df[predictor])) - 1
         )

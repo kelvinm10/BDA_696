@@ -30,3 +30,8 @@
 
 - main function takes in 3 parameters: pandas dataset, list of predictor names (strings), and name of response (string)
 - outputs a "finalTable.html" file which can be opened on a browser and all information is in the table
+
+## Assignment 5:
+
+- The variable ranking and brute force tables are in the "finalTables" folder in the assignments folder
+- the results of the random forest and logistic regression are printed out to the console

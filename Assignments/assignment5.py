@@ -33,12 +33,11 @@ def main():
     baseball_df = baseball_df[baseball_df.columns[6:]]
     # print(baseball_df)
 
-    # need to fill NAs with values (will fill with mean of column)
+    # Drop all NA values (I decided to drop, because when a stat had NA, then it was that pitchers or teams
+    # first game, so they had no previous game stats, thus doing something like filling in the na with mean would
+    # not necessarily make sense)
     all_columns = list(baseball_df.columns)
     features = all_columns[: len(all_columns) - 1]
-    # for i in features:
-    #     mean_value = baseball_df[i].mean()
-    #     baseball_df[i].fillna(mean_value, inplace=True)
 
     baseball_df.dropna(inplace=True)
     baseball_df.reset_index(inplace=True, drop=True)
@@ -100,6 +99,17 @@ def main():
         "logit optimized Accuracy: ", metrics.accuracy_score(y_test, log_optimized_pred)
     )
     print(log_optimized.summary())
+
+    # both models are performing pretty poorly, but the logistic regression model seems to perform slightly better than
+    # the random forest. If I had more time, I would try to hypertune the parameters for each of the models using grid
+    # search or randomized search in order to try to improve the accuracy. I would also try to engineer better features
+    # in sql, as it seems that the features that I chose and calculated were not very effective in predicting a win or
+    # a loss for the home team. I thought that these features would be effective in predicting who would win the game,
+    # because I took the difference in both the home and away pitcher's stats such as rolling strikeouts per nine
+    # innings, rolling home runs allowed per nine innings, etc. I did the difference between the home and away pitcher
+    # stats, because I thought this would capture the difference in skill level between the two pitchers, and thus
+    # provide an advantage to the home or away team, but maybe there is something that I am missing. I will explore
+    # further and do all of these steps (and more) for the final project in order to try to improve my final model.
 
 
 if __name__ == "__main__":
