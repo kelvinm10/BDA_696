@@ -21,6 +21,7 @@
 `pre-commit run --all-files`
 
 ## Midterm:
+
 - main function takes in 3 parameters: pandas dataframe, list of predictor names (strings), and name of response (string)
 - outputs a maximum of 6 files: "continuous_predictors_table.html" , "cat_cont_predictors_table.html" , "cat_predictors_table.html" , "cont_cont_brute_force_table.html" , "cont_cat_brute_force_table.html" , "cat_cat_brute_force_table.html"
 - maximum of 3 correlation matrices will be automatically displayed in browser
@@ -29,4 +30,3 @@
 
 - main function takes in 3 parameters: pandas dataset, list of predictor names (strings), and name of response (string)
 - outputs a "finalTable.html" file which can be opened on a browser and all information is in the table
-

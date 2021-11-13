@@ -132,8 +132,10 @@ def diff_mean_response(df, predictor, response, weighted):
     # if continuous, then # of bins is the square root of the total number of observations
     # if not continuous, then categorical, so bins will be # of categories - 1 and bin each category in own bin
     if is_continuous(df, predictor):
+        print(df[predictor].dtype)
         holder, bin_create = np.histogram(df[predictor], bins=10)
     else:
+        print(df[predictor].dtype)
         holder, bin_create = np.histogram(
             df[predictor], bins=len(np.unique(df[predictor])) - 1
         )
@@ -243,6 +245,126 @@ def random_forest_variable_importance(X_train, y_train):
     rf = RandomForestClassifier()
     rf.fit(X_train, y_train)
     return rf.feature_importances_
+
+
+def run_main_rankings(dataframe, predictors, response):
+    # create a random seed for reproducible results (especially for random forest)
+    np.random.seed(100)
+
+    # beacause the random forest variable importance computes the ranking all at once,
+    # do this first, then pull the value when looping through the predictors
+    rand_forest_ranking = random_forest_variable_importance(
+        dataframe.loc[:, predictors].values, dataframe[response].values
+    )
+    # loop through predictors, and display correct plot
+    idx = 0
+    eda_plots = []
+    reg_plots = []
+    diff_plots = []
+    t_values = []
+    p_values = []
+    forest_rankings = []
+    diff_weighted = []
+    diff_unweighted = []
+    folder = ""
+    for i in predictors:
+        # store strings for all the plots
+        eda_plot_string = "eda_" + i.replace(" ", "") + ".html"
+        reg_plot_string = "reg_" + i.replace(" ", "") + ".html"
+        diff_plot_string = "diff_" + i.replace(" ", "") + ".html"
+        # CONDITION WHERE PREDICTOR IS CONTINUOUS
+        # 1) plot predictor vs response using correct plot
+        # 2) show p-value and t-score (continuous response: linear regression, categorical response: logistic regression
+        # 3) difference with mean of response along with plot (weighted and unweighted)
+        # 4) Random Forest var importance ranking
+        if is_continuous(dataframe, i):
+            eda_fig = plot_continuous(dataframe, dataframe[i], response)
+            reg_fig, t_val, p_val = regression(dataframe, i, response)
+            # append t values and p values to list
+            t_values.append(t_val)
+            p_values.append(p_val)
+            i_diff_unweighted, plot = diff_mean_response(dataframe, i, response, False)
+            i_diff_weighted, _ = diff_mean_response(dataframe, i, response, True)
+            # append these values to correct diff list
+            diff_unweighted.append(i_diff_unweighted)
+            diff_weighted.append(i_diff_weighted)
+
+            # get random forest ranking and append to list
+            i_forest_ranking = rand_forest_ranking[idx]
+            forest_rankings.append(i_forest_ranking)
+
+            # write html files of figures, then append to a list of each
+            eda_fig.write_html(eda_plot_string)
+            reg_fig.write_html(reg_plot_string)
+            plot.write_html(folder + diff_plot_string)
+            eda_plots.append(eda_plot_string)
+            reg_plots.append(reg_plot_string)
+            diff_plots.append(diff_plot_string)
+
+        # CONDITION WHERE PREDICTOR IS CATEGORICAL
+        # 1) plot predictor vs response using correct plot
+        # 2) Difference with mean of response along with plot (weighted and unweighted)
+        else:
+            eda_fig = plot_categorical(dataframe, dataframe[i], response)
+            i_diff_unweighted, plot = diff_mean_response(dataframe, i, response, False)
+            i_diff_weighted, _ = diff_mean_response(dataframe, i, response, True)
+            # append to correct list
+            diff_unweighted.append(i_diff_unweighted)
+            diff_weighted.append(i_diff_weighted)
+
+            # write html files of plots and append to correct list
+            eda_fig.write_html(eda_plot_string)
+            plot.write_html(diff_plot_string)
+            eda_plots.append(eda_plot_string)
+            diff_plots.append(diff_plot_string)
+
+            # append null for t values, p values, and random Forest rankings as these are categorical predictors
+            t_values.append(None)
+            p_values.append(None)
+            forest_rankings.append(None)
+            forest_rankings.append(None)
+
+        idx += 1
+
+    # now, create dataframe with all of the gathered information
+    result = pd.DataFrame(
+        list(
+            zip(
+                predictors,
+                eda_plots,
+                t_values,
+                p_values,
+                reg_plots,
+                diff_weighted,
+                diff_unweighted,
+                diff_plots,
+                forest_rankings,
+            )
+        ),
+        columns=[
+            "Predictor",
+            "EDA Plots",
+            "t-value",
+            "p-value",
+            "Regression Plots",
+            "Weighted DMR",
+            "Unweighted DMR",
+            "DMR Plot",
+            "RF Variable Importance",
+        ],
+    )
+    if not os.path.exists("finalTables"):
+        os.makedirs("finalTables")
+
+    result.to_html(
+        "finalTables/asssignment4Table.html",
+        formatters={
+            "EDA Plots": lambda x: f'<a href="{x}">{x}</a>',
+            "Regression Plots": lambda x: f'<a href="{x}">{x}</a>',
+            "DMR Plot": lambda x: f'<a href="{x}">{x}</a>',
+        },
+        escape=False,
+    )
 
 
 # main Parameters:
