@@ -33,14 +33,14 @@ def cont_cont_correlation(dataframe, list_of_predictors, response):
     # create plots for all predictors
     for i in list_of_predictors:
         fig = plot_continuous(dataframe, dataframe[i], response)
-        fig.write_html(i.replace(" ", "") + ".html")
+        fig.write_html("finalTables/" + i.replace(" ", "") + ".html")
 
     result = pd.DataFrame(
         list(zip(pred1, pred2, metrics)),
         columns=["predictor1", "predictor2", "pearson coefficient"],
     ).sort_values(by="pearson coefficient", ascending=False)
     result.to_html(
-        "continuous_predictors_table.html",
+        "finalTables/continuous_predictors_table.html",
         formatters={
             "predictor1": lambda x: f'<a href="{x.replace(" ", "") + ".html"}">{x}</a>',
             "predictor2": lambda x: f'<a href="{x.replace(" ", "") + ".html"}">{x}</a>',
@@ -60,6 +60,13 @@ def is_binary(dataframe, column_name):
 
 # this function will create a table with all cont-cat predictor combinations ordered by correlation metric
 def cont_cat_correlation(dataframe, list_of_cont, list_of_cat, response):
+    if len(list_of_cat) < 1:
+        print(
+            "Less then 1 categorical predictors in dataframe, skipping cont-cat predictor table",
+            file=sys.stderr,
+        )
+        return
+
     # first, get all combinations of cont-cat in a single list
     combinations = list(itertools.product(list_of_cont, list_of_cat))
 
@@ -95,12 +102,12 @@ def cont_cat_correlation(dataframe, list_of_cont, list_of_cat, response):
     # produce plots of all the categorical predictors
     for i in list_of_cat:
         fig = plot_categorical(dataframe, dataframe[i], response)
-        fig.write_html(i.replace(" ", "") + ".html")
+        fig.write_html("finalTables/" + i.replace(" ", "") + ".html")
 
     # produce plots of continuous predictors
     for i in list_of_cont:
         fig = plot_continuous(dataframe, dataframe[i], response)
-        fig.write_html(i.replace(" ", "") + ".html")
+        fig.write_html("finalTables/" + i.replace(" ", "") + ".html")
 
     # create resulting table in a pandas dataframe
     result = pd.DataFrame(
@@ -146,7 +153,7 @@ def cat_cat_correlation(dataframe, list_of_cat, response):
     # plot all of the categorical predictors
     for i in list_of_cat:
         fig = plot_categorical(dataframe, dataframe[i], response)
-        fig.write_html(i.replace(" ", "") + ".html")
+        fig.write_html("finalTables/" + i.replace(" ", "") + ".html")
 
     # create resulting table in a pandas dataframe
     result = pd.DataFrame(
@@ -338,7 +345,7 @@ def diff_mean_response_2d_cont(dataframe, cont_pred1, cont_pred2, response, weig
         xaxis_title=f"{cont_pred1}",
         yaxis_title=f"{cont_pred2}",
     )
-    fig.write_html(f"{cont_pred1} vs {cont_pred2}.html")
+    fig.write_html(f"finalTables/{cont_pred1} vs {cont_pred2}.html")
 
     # now plot residual plot, if weighted = true, plot weighted version, else, plot unweighted version
 
@@ -363,7 +370,7 @@ def diff_mean_response_2d_cont(dataframe, cont_pred1, cont_pred2, response, weig
         xaxis_title=f"{cont_pred1}",
         yaxis_title=f"{cont_pred2}",
     )
-    fig2.write_html(plot_title + ".html")
+    fig2.write_html("finalTables/" + plot_title + ".html")
 
     return result
 
@@ -510,7 +517,7 @@ def diff_mean_response_cont_cat_2d(dataframe, cont, cat, response, weighted):
         xaxis_title=f"{cont}",
         yaxis_title=f"{cat}",
     )
-    fig.write_html(f"{cont} vs {cat}.html")
+    fig.write_html(f"finalTables/{cont} vs {cat}.html")
 
     # now plot residual plot, if weighted = true, plot weighted version, else, plot unweighted version
 
@@ -535,7 +542,7 @@ def diff_mean_response_cont_cat_2d(dataframe, cont, cat, response, weighted):
         xaxis_title=f"{cont}",
         yaxis_title=f"{cat}",
     )
-    fig2.write_html(plot_title + ".html")
+    fig2.write_html("finalTables/" + plot_title + ".html")
 
     return result
 
@@ -684,7 +691,7 @@ def diff_mean_response_cat_cat_2d(dataframe, cat1, cat2, response, weighted):
         xaxis_title=f"{cat1}",
         yaxis_title=f"{cat2}",
     )
-    fig.write_html(f"{cat1} vs {cat2}.html")
+    fig.write_html(f"finalTables/{cat1} vs {cat2}.html")
 
     # now plot residual plot, if weighted = true, plot weighted version, else, plot unweighted version
 
@@ -709,7 +716,7 @@ def diff_mean_response_cat_cat_2d(dataframe, cat1, cat2, response, weighted):
         xaxis_title=f"{cat1}",
         yaxis_title=f"{cat2}",
     )
-    fig2.write_html(plot_title + ".html")
+    fig2.write_html("finalTables/" + plot_title + ".html")
 
     return result
 
@@ -767,7 +774,7 @@ def cont_cont_brute_force(dataframe, cont_predictors, response):
     ).sort_values(by="weighted DMR", ascending=False)
 
     cont_table.to_html(
-        "cont_cont_brute_force_table.html",
+        "finalTables/cont_cont_brute_force_table.html",
         formatters={
             "bin mean plot": lambda x: f'<a href="{x}.html">{x}</a>',
             "residual plot": lambda x: f'<a href="{x}.html">{x}</a>',
@@ -825,7 +832,7 @@ def cont_cat_brute_force(dataframe, cont_predictors, cat_predictors, response):
     ).sort_values(by="weighted DMR", ascending=False)
 
     cont_table.to_html(
-        "cont_cat_brute_force_table.html",
+        "finalTables/cont_cat_brute_force_table.html",
         formatters={
             "bin mean plot": lambda x: f'<a href="{x}.html">{x}</a>',
             "residual plot": lambda x: f'<a href="{x}.html">{x}</a>',
@@ -883,7 +890,7 @@ def cat_cat_brute_force(dataframe, cat_predictors, response):
     ).sort_values(by="weighted DMR", ascending=False)
 
     cont_table.to_html(
-        "cat_cat_brute_force_table.html",
+        "finalTables/cat_cat_brute_force_table.html",
         formatters={
             "bin mean plot": lambda x: f'<a href="{x}.html">{x}</a>',
             "residual plot": lambda x: f'<a href="{x}.html">{x}</a>',
@@ -891,6 +898,87 @@ def cat_cat_brute_force(dataframe, cat_predictors, response):
         },
         escape=False,
     )
+
+
+def run_all(dataframe, predictors, response):
+    # first need to split dataset on predictors in list between categoricals and continuous
+    categoricals = []
+    continuous = []
+    for i in predictors:
+        if is_continuous(dataframe, i):
+            continuous.append(i)
+        else:
+            categoricals.append(i)
+
+    # next calculate correlation metrics between all predictors (can assume all categoricals are nominal)
+    # first do all continuous-continuous pairs, this function will create a "continuous_predictors_table" html file
+    cont_cont_correlation(dataframe, continuous, response)
+
+    # next, do continuous-categorical pairs, this function will create a "cat_cont_predictors_table" html file
+    # which contains the table and all linking plots
+    cont_cat_correlation(dataframe, continuous, categoricals, response)
+
+    # lastly, do categorical-categorical, will create html file "cat_predictors_table.html"
+    cat_cat_correlation(dataframe, categoricals, response)
+
+    # continuous-continuous correlation matrix heatmap, will open in browser
+    if len(continuous) == 0:
+        print(
+            "No continuous predictors in dataset, skipping cont-cat corr matrix",
+            file=sys.stderr,
+        )
+    else:
+        cont_cont_heatmap(continuous, dataframe)
+
+    # Continuous-Categorical correlation matrix heatmap, will open in browser
+    if len(categoricals) == 0:
+        print(
+            "No categorical predictors in dataset, skipping cont-cat corr matrix",
+            file=sys.stderr,
+        )
+    elif len(continuous) == 0:
+        print(
+            "No continuous predictors in dataset, skipping cont-cat corr matrix",
+            file=sys.stderr,
+        )
+    else:
+        cont_cat_heatmap(categoricals, continuous, dataframe)
+
+    # Categorical-Categorical correlation matrix heatmap, heatmap will open in browser
+    if len(categoricals) == 0:
+        print(
+            "No categorical predictors in dataset, skipping cat-cat corr matrix",
+            file=sys.stderr,
+        )
+    else:
+        cat_cat_heatmap(categoricals, dataframe)
+
+    # before brute force, check if response is numeric in order to correctly perform brute force
+    if ~is_numeric_dtype(dataframe[response]):
+        values = list(set(dataframe[response].values))
+        encoded_series = dataframe[response].replace([values[0], values[1]], [0, 1])
+        dataframe[response] = encoded_series
+
+    # brute force for continuous - continuous will output html file "cont_cont_brute_force_table.html"
+    cont_cont_brute_force(dataframe, continuous, response)
+
+    # brute force for continuous - categorical, will output html file "cont_cat_brute_force_table.html"
+    if len(categoricals) == 0:
+        print(
+            "No categorical predictors in dataset, cont cat brute force table",
+            file=sys.stderr,
+        )
+    else:
+        cont_cat_brute_force(dataframe, continuous, categoricals, response)
+
+    # brute force for categorical - categorical, will output html file called, "cat_cat_brute_force_table.html"
+    if len(categoricals) == 0:
+        print(
+            "No categorical predictors in dataset, skipping cat-cat brute force table",
+            file=sys.stderr,
+        )
+    else:
+        cat_cat_brute_force(dataframe, categoricals, response)
 
 
 def main(dataframe, predictors, response):
