@@ -264,7 +264,7 @@ def run_main_rankings(dataframe, predictors, response):
     forest_rankings = []
     diff_weighted = []
     diff_unweighted = []
-    folder = ""
+    folder = "finalTables/"
     for i in predictors:
         # store strings for all the plots
         eda_plot_string = "eda_" + i.replace(" ", "") + ".html"
@@ -292,8 +292,8 @@ def run_main_rankings(dataframe, predictors, response):
             forest_rankings.append(i_forest_ranking)
 
             # write html files of figures, then append to a list of each
-            eda_fig.write_html(eda_plot_string)
-            reg_fig.write_html(reg_plot_string)
+            eda_fig.write_html(folder + eda_plot_string)
+            reg_fig.write_html(folder + reg_plot_string)
             plot.write_html(folder + diff_plot_string)
             eda_plots.append(eda_plot_string)
             reg_plots.append(reg_plot_string)
@@ -311,8 +311,8 @@ def run_main_rankings(dataframe, predictors, response):
             diff_weighted.append(i_diff_weighted)
 
             # write html files of plots and append to correct list
-            eda_fig.write_html(eda_plot_string)
-            plot.write_html(diff_plot_string)
+            eda_fig.write_html("finalTables/" + eda_plot_string)
+            plot.write_html("finalTables/" + diff_plot_string)
             eda_plots.append(eda_plot_string)
             diff_plots.append(diff_plot_string)
 

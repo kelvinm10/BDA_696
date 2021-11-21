@@ -33,7 +33,7 @@ def cont_cont_correlation(dataframe, list_of_predictors, response):
     # create plots for all predictors
     for i in list_of_predictors:
         fig = plot_continuous(dataframe, dataframe[i], response)
-        fig.write_html(i.replace(" ", "") + ".html")
+        fig.write_html("finalTables/" + i.replace(" ", "") + ".html")
 
     result = pd.DataFrame(
         list(zip(pred1, pred2, metrics)),
@@ -60,6 +60,13 @@ def is_binary(dataframe, column_name):
 
 # this function will create a table with all cont-cat predictor combinations ordered by correlation metric
 def cont_cat_correlation(dataframe, list_of_cont, list_of_cat, response):
+    if len(list_of_cat) < 1:
+        print(
+            "Less then 1 categorical predictors in dataframe, skipping cont-cat predictor table",
+            file=sys.stderr,
+        )
+        return
+
     # first, get all combinations of cont-cat in a single list
     combinations = list(itertools.product(list_of_cont, list_of_cat))
 
@@ -95,12 +102,12 @@ def cont_cat_correlation(dataframe, list_of_cont, list_of_cat, response):
     # produce plots of all the categorical predictors
     for i in list_of_cat:
         fig = plot_categorical(dataframe, dataframe[i], response)
-        fig.write_html(i.replace(" ", "") + ".html")
+        fig.write_html("finalTables/" + i.replace(" ", "") + ".html")
 
     # produce plots of continuous predictors
     for i in list_of_cont:
         fig = plot_continuous(dataframe, dataframe[i], response)
-        fig.write_html(i.replace(" ", "") + ".html")
+        fig.write_html("finalTables/" + i.replace(" ", "") + ".html")
 
     # create resulting table in a pandas dataframe
     result = pd.DataFrame(
@@ -146,7 +153,7 @@ def cat_cat_correlation(dataframe, list_of_cat, response):
     # plot all of the categorical predictors
     for i in list_of_cat:
         fig = plot_categorical(dataframe, dataframe[i], response)
-        fig.write_html(i.replace(" ", "") + ".html")
+        fig.write_html("finalTables/" + i.replace(" ", "") + ".html")
 
     # create resulting table in a pandas dataframe
     result = pd.DataFrame(
@@ -338,7 +345,7 @@ def diff_mean_response_2d_cont(dataframe, cont_pred1, cont_pred2, response, weig
         xaxis_title=f"{cont_pred1}",
         yaxis_title=f"{cont_pred2}",
     )
-    fig.write_html(f"{cont_pred1} vs {cont_pred2}.html")
+    fig.write_html(f"finalTables/{cont_pred1} vs {cont_pred2}.html")
 
     # now plot residual plot, if weighted = true, plot weighted version, else, plot unweighted version
 
@@ -363,7 +370,7 @@ def diff_mean_response_2d_cont(dataframe, cont_pred1, cont_pred2, response, weig
         xaxis_title=f"{cont_pred1}",
         yaxis_title=f"{cont_pred2}",
     )
-    fig2.write_html(plot_title + ".html")
+    fig2.write_html("finalTables/" + plot_title + ".html")
 
     return result
 
@@ -510,7 +517,7 @@ def diff_mean_response_cont_cat_2d(dataframe, cont, cat, response, weighted):
         xaxis_title=f"{cont}",
         yaxis_title=f"{cat}",
     )
-    fig.write_html(f"{cont} vs {cat}.html")
+    fig.write_html(f"finalTables/{cont} vs {cat}.html")
 
     # now plot residual plot, if weighted = true, plot weighted version, else, plot unweighted version
 
@@ -535,7 +542,7 @@ def diff_mean_response_cont_cat_2d(dataframe, cont, cat, response, weighted):
         xaxis_title=f"{cont}",
         yaxis_title=f"{cat}",
     )
-    fig2.write_html(plot_title + ".html")
+    fig2.write_html("finalTables/" + plot_title + ".html")
 
     return result
 
@@ -684,7 +691,7 @@ def diff_mean_response_cat_cat_2d(dataframe, cat1, cat2, response, weighted):
         xaxis_title=f"{cat1}",
         yaxis_title=f"{cat2}",
     )
-    fig.write_html(f"{cat1} vs {cat2}.html")
+    fig.write_html(f"finalTables/{cat1} vs {cat2}.html")
 
     # now plot residual plot, if weighted = true, plot weighted version, else, plot unweighted version
 
@@ -709,7 +716,7 @@ def diff_mean_response_cat_cat_2d(dataframe, cat1, cat2, response, weighted):
         xaxis_title=f"{cat1}",
         yaxis_title=f"{cat2}",
     )
-    fig2.write_html(plot_title + ".html")
+    fig2.write_html("finalTables/" + plot_title + ".html")
 
     return result
 

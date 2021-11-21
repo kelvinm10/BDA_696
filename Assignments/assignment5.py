@@ -114,6 +114,11 @@ def main():
 
 if __name__ == "__main__":
     # delete any existing html files in current directory
+    for f in os.listdir(os.getcwd() + "/" + "finalTables/"):
+        if not f.endswith(".html"):
+            continue
+        os.remove(os.path.join(os.getcwd() + "/" + "finalTables/", f))
+
     for f in os.listdir(os.getcwd()):
         if not f.endswith(".html"):
             continue

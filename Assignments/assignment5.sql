@@ -182,7 +182,8 @@ CREATE INDEX IF NOT EXISTS game_id_idx ON 10game_rolling_teamRuns(game_id);
 
 
 DROP TABLE IF EXISTS final_diff_features;
-# NOW JOIN ALL TABLES TOGETHER TO ONE
+# NOW JOIN ALL TABLES TOGETHER TO ONE, IN DOING THIS, I WILL CALCULATE THE DIFFERENCE BETWEEN THE HOME AND AWAY PITCHER STATS
+# IN ORDER TO CAPTURE POSSIBLE ADVANTAGES THAT THE HOME OR AWAY TEAM HAS IN TERMS OF THEIR STARTING PITCHER.
 CREATE TABLE final_diff_features
 SELECT g.game_id, g.home_team_id, g.away_team_id, g.home_pitcher, g.away_pitcher, 
 	   rkp9.`5_game_rolling_K/9` - rkp9a.`5_game_rolling_K/9` AS rolling_k9_diff,
@@ -195,7 +196,8 @@ SELECT g.game_id, g.home_team_id, g.away_team_id, g.home_pitcher, g.away_pitcher
 	   hoba.`historic_OBA` - hoba1.`historic_OBA` AS historic_oba_diff,
 	   rtba.`10_day_rolling_BA`- rtba1.`10_day_rolling_BA` AS rolling_BA_diff, 
 	   rtr.`10_game_rolling_runs_scored` AS home_team_rolling_avgrunsScored, 
-	   rtr1.`10_game_rolling_runs_scored` AS away_team_rolling_avgrunsScored, winner_home_or_away
+	   rtr1.`10_game_rolling_runs_scored` AS away_team_rolling_avgrunsScored, 
+	   winner_home_or_away
 FROM boxscore b 
 JOIN game 							g 			ON g.game_id = b.game_id 
 JOIN 5game_rolling_k_per_nine 		rkp9 		ON g.game_id = rkp9.game_id AND g.home_pitcher = rkp9.pitcher
@@ -221,6 +223,5 @@ JOIN 10game_rolling_teamRuns		rtr1		ON g.game_id = rtr1.game_id AND g.away_team_
 ORDER BY g.game_id;
 
 
-SELECT * FROM final_diff_features fdf2 
 
 
