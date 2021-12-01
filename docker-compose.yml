@@ -1,0 +1,27 @@
+# Use root/example as user/password credentials
+version: "3.9"
+
+services:
+  db:
+    image: mariadb
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example # pragma: allowlist secret
+      MYSQL_DATABASE: baseball
+
+    volumes:
+      - "./baseball.sql:/docker-entrypoint-initdb.d/baseball.sql"
+      - "./Assignments/assignment5sql.sql:/docker-entrypoint-initdb.d/cassignment5sql.sql"
+
+  pyscript:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - "8080:3306"

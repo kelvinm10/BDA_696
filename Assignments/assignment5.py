@@ -5,20 +5,25 @@ import pandas as pd
 import sqlalchemy
 import statsmodels.api as sm
 from assignment4 import run_main_rankings
+from flask import Flask
 from midterm import run_all
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 
+app = Flask(__name__)
+
 
 def main():
-    db_user = "root"
-    db_pass = ""  # pragma: allowlist secret
-    db_host = "localhost"
-    db_database = "baseball"
-    connect_string = (
-        f"mariadb+mariadbconnector://{db_user}:{db_pass}@{db_host}/{db_database}"
-    )
-    # pragma: allowlist secret
+    # db_user = "root"
+    # db_pass = ""  # pragma: allowlist secret
+    # db_host = "localhost"
+    # db_database = "baseball"
+    # # connect_string = (
+    # #     f"mariadb+mariadbconnector://{db_user}:{db_pass}@{db_host}/{db_database}"
+    # # )
+
+    # db is the name of the service of the mariadb container in the compose file
+    connect_string = "mysql+mysqlconnector://root:example@db:3306/baseball"  # pragma: allowlist secret
     sql_engine = sqlalchemy.create_engine(connect_string)
 
     query = """
