@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 import pandas as pd
 import sqlalchemy
@@ -24,13 +25,25 @@ def main():
 
     # db is the name of the service of the mariadb container in the compose file
     connect_string = "mysql+mysqlconnector://root:example@db:3306/baseball"  # pragma: allowlist secret
-    sql_engine = sqlalchemy.create_engine(connect_string)
 
-    query = """
-           SELECT *
-           FROM final_diff_features;
-     """
-    df = pd.read_sql_query(query, sql_engine)
+    # the first time connecting to the mariadb connector, it will take a few minutes to
+    # connect (due to inserting and reading baseball.sql database), this loop will continue to try to
+    # connect
+    # this sleep function allows the mariadb container to fully spin up when creating the container for the
+    # first time. Can lower the sleep value once re running already built container
+    time.sleep(600)
+    while True:
+        try:
+            sql_engine = sqlalchemy.create_engine(connect_string)
+            query = """
+                       SELECT *
+                       FROM final_diff_features;
+                 """
+            df = pd.read_sql_query(query, sql_engine)
+            break
+        except Exception:
+            print("connection failed, retrying...")
+
     # there are some empty strings in our response (exhibition game ending in a tie) drop these rows
     baseball_df = df[df["winner_home_or_away"] != ""]
     baseball_df.reset_index(inplace=True)
