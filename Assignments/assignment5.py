@@ -6,12 +6,9 @@ import pandas as pd
 import sqlalchemy
 import statsmodels.api as sm
 from assignment4 import run_main_rankings
-from flask import Flask
 from midterm import run_all
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
-
-app = Flask(__name__)
 
 
 def main():
@@ -31,7 +28,6 @@ def main():
     # connect
     # this sleep function allows the mariadb container to fully spin up when creating the container for the
     # first time. Can lower the sleep value once re running already built container
-    time.sleep(600)
     while True:
         try:
             sql_engine = sqlalchemy.create_engine(connect_string)
@@ -42,7 +38,8 @@ def main():
             df = pd.read_sql_query(query, sql_engine)
             break
         except Exception:
-            print("connection failed, retrying...")
+            print("connection failed, sleeping then retrying...")
+            time.sleep(590)
 
     # there are some empty strings in our response (exhibition game ending in a tie) drop these rows
     baseball_df = df[df["winner_home_or_away"] != ""]

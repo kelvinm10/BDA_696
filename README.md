@@ -35,3 +35,12 @@
 
 - The variable ranking and brute force tables are in the "finalTables" folder in the assignments folder
 - the results of the random forest and logistic regression are printed out to the console
+
+## Assignment 6:
+
+- dockerfile and docker-compose file are in the root of the project.
+- Assumes that database "baseball.sql" is in the root of the project (same directory level as docker files)
+- running "docker-compose up" will create the 2 images and run all the code in assignment5.
+- When running for the first time, it takes about 5-10 min for the baseball database to be imported and loaded into the mariadb instance, because of this there is a `sleep` function in assignment 5 just before executing the first sql command in order to allow for the connection to be live
+- After the containers have already been built, the docker containers run much quicker
+- All tables and results from the assignment5 python script are in the "finalResults" directory in the root of the project

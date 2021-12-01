@@ -9,5 +9,4 @@ seaborn
 mariadb
 sqlalchemy
 gunicorn
-flask
 mysql-connector-python-rf

@@ -20,6 +20,6 @@ COPY Assignments/assignment5sql.sql .
 
 RUN mkdir finalTables/
 
-# CMD gunicorn --bind :8080 --timeout 500 --workers 1 --threads 2 assignment5:main
+
 CMD ["python", "assignment5.py"]
 

@@ -11,6 +11,11 @@ services:
       MYSQL_ROOT_PASSWORD: example # pragma: allowlist secret
       MYSQL_DATABASE: baseball
 
+    # mounting baseball.sql and assignment5sql.sql in docker-entrypoint-initdb.d folder, because container
+    # will automatically run sql files in this folder. I renamed assignment5sql.sql to cassignment5sql.sql in container
+    # because files are run in alphabetical order in this folder, so I need the "baseball.sql" file to run first in order
+    # to initialize the baseball database first, then extract features from assignment5sql.sql
+    # https://serverfault:com/questions/796762/creating-a-docker-mysql-container-with-a-prepared-database-scheme
     volumes:
       - "./baseball.sql:/docker-entrypoint-initdb.d/baseball.sql"
       - "./Assignments/assignment5sql.sql:/docker-entrypoint-initdb.d/cassignment5sql.sql"
@@ -25,3 +30,6 @@ services:
       - db
     ports:
       - "8080:3306"
+    # this will mount the results from the script from the container back to the host machine in finalResults directory
+    volumes:
+      - "./finalResults:/finalTables"
