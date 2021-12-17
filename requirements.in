@@ -8,3 +8,5 @@ statsmodels
 seaborn
 mariadb
 sqlalchemy
+gunicorn
+mysql-connector-python-rf
