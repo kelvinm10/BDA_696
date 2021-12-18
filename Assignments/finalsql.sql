@@ -1,10 +1,9 @@
 USE baseball;
 
 
-DROP TEMPORARY TABLE IF EXISTS 10game_rolling_k_per_nine;
 
 # Rolling K/9 for past 10 starts
-CREATE TEMPORARY TABLE 10game_rolling_k_per_nine
+CREATE TEMPORARY TABLE IF NOT EXISTS 10game_rolling_k_per_nine
 SELECT g.game_id,pitcher, 
 CASE 
 	WHEN SUM(outsPlayed) = 0
@@ -30,9 +29,9 @@ CREATE INDEX IF NOT EXISTS game_id_idx ON 10game_rolling_k_per_nine(game_id);
 
 
 
-DROP TEMPORARY TABLE IF EXISTS historic_k_per_nine;
+# DROP TEMPORARY TABLE IF EXISTS historic_k_per_nine;
 # historic strikeouts per 9
-CREATE TEMPORARY TABLE historic_k_per_nine
+CREATE TEMPORARY TABLE IF NOT EXISTS historic_k_per_nine
 SELECT g.game_id, pitcher,
 ((SUM(Strikeout) OVER(PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) + 
 		 SUM(`Strikeout_-_DP`) OVER(PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) + 
@@ -48,9 +47,9 @@ GROUP BY pitcher, g.game_id, local_date;
 CREATE INDEX IF NOT EXISTS pitcher_idx ON historic_k_per_nine(pitcher);
 CREATE INDEX IF NOT EXISTS game_id_idx ON historic_k_per_nine(game_id);
 
-DROP TEMPORARY TABLE IF EXISTS 10game_rolling_hr_per_nine;
+# DROP TEMPORARY TABLE IF EXISTS 10game_rolling_hr_per_nine;
 # rolling hr/9 for past 10 starts
-CREATE TEMPORARY TABLE 10game_rolling_hr_per_nine
+CREATE TEMPORARY TABLE IF NOT EXISTS 10game_rolling_hr_per_nine
 SELECT g.game_id, pitcher,
 CASE 
 	WHEN SUM(outsPlayed) = 0
@@ -68,9 +67,9 @@ CREATE INDEX IF NOT EXISTS pitcher_idx ON 10game_rolling_hr_per_nine(pitcher);
 CREATE INDEX IF NOT EXISTS game_id_idx ON 10game_rolling_hr_per_nine(game_id);
 
 
-DROP TEMPORARY TABLE IF EXISTS historic_hr_per_nine;
+# DROP TEMPORARY TABLE IF EXISTS historic_hr_per_nine;
 # historic hr per 9
-CREATE TEMPORARY TABLE historic_hr_per_nine
+CREATE TEMPORARY TABLE IF NOT EXISTS historic_hr_per_nine
 SELECT g.game_id, pitcher,
 SUM(Home_Run*9) OVER(PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) / 
 SUM(outsPlayed/3)OVER(PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
@@ -85,9 +84,9 @@ CREATE INDEX IF NOT EXISTS pitcher_idx ON historic_hr_per_nine(pitcher);
 CREATE INDEX IF NOT EXISTS game_id_idx ON historic_hr_per_nine(game_id);
 
 
-DROP TEMPORARY TABLE IF EXISTS 10game_rolling_hits_per_nine;
+# DROP TEMPORARY TABLE IF EXISTS 10game_rolling_hits_per_nine;
 # rolling hits / 9 for past 5 starts
-CREATE TEMPORARY TABLE 10game_rolling_hits_per_nine
+CREATE TEMPORARY TABLE IF NOT EXISTS 10game_rolling_hits_per_nine
 SELECT g.game_id, pitcher,
 CASE 
 	WHEN SUM(outsPlayed) = 0
@@ -105,9 +104,9 @@ CREATE INDEX IF NOT EXISTS pitcher_idx ON 10game_rolling_hits_per_nine(pitcher);
 CREATE INDEX IF NOT EXISTS game_id_idx ON 10game_rolling_hits_per_nine(game_id);
 
 
-DROP TEMPORARY TABLE IF EXISTS historic_hits_per_nine;
+# DROP TEMPORARY TABLE IF EXISTS historic_hits_per_nine;
 #historic hits / 9 
-CREATE TEMPORARY TABLE historic_hits_per_nine
+CREATE TEMPORARY TABLE IF NOT EXISTS historic_hits_per_nine
 SELECT g.game_id, pitcher, 
 SUM(Hit*9) OVER (PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) / 
 SUM(outsPlayed/3) OVER(PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
@@ -122,8 +121,8 @@ CREATE INDEX IF NOT EXISTS pitcher_idx ON historic_hits_per_nine(pitcher);
 CREATE INDEX IF NOT EXISTS game_id_idx ON historic_hits_per_nine(game_id);
 
 # 10 game rolling whip (walks + hits)/ Innings Pitched
-DROP TEMPORARY TABLE IF EXISTS 10game_rolling_whip;
-CREATE TEMPORARY TABLE 10game_rolling_whip
+# DROP TEMPORARY TABLE IF EXISTS 10game_rolling_whip;
+CREATE TEMPORARY TABLE IF NOT EXISTS 10game_rolling_whip
 SELECT g.game_id, pitcher, 
 CASE 
 	WHEN SUM(outsPlayed) = 0
@@ -142,9 +141,9 @@ CREATE INDEX IF NOT EXISTS game_id_idx ON 10game_rolling_whip(game_id);
 
 
 
-DROP TEMPORARY TABLE IF EXISTS 10game_rolling_oba;
+# DROP TEMPORARY TABLE IF EXISTS 10game_rolling_oba;
 # rolling 5 game opponents batting average (OBA) (Hits / at bats)
-CREATE TEMPORARY TABLE 10game_rolling_oba
+CREATE TEMPORARY TABLE IF NOT EXISTS 10game_rolling_oba
 SELECT g.game_id, pitcher, 
 CASE 
 	WHEN SUM(atBat) = 0
@@ -162,9 +161,9 @@ CREATE INDEX IF NOT EXISTS pitcher_idx ON 10game_rolling_oba(pitcher);
 CREATE INDEX IF NOT EXISTS game_id_idx ON 10game_rolling_oba(game_id);
 
 
-DROP TEMPORARY TABLE IF EXISTS historic_oba;
+# DROP TEMPORARY TABLE IF EXISTS historic_oba;
 #historic OBA
-CREATE TEMPORARY TABLE historic_oba
+CREATE TEMPORARY TABLE IF NOT EXISTS historic_oba
 SELECT g.game_id, pitcher, local_date,
 SUM(Hit) OVER(PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) / 
 SUM(atBat) OVER(PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
@@ -178,9 +177,9 @@ GROUP BY pitcher, g.game_id, local_date;
 CREATE INDEX IF NOT EXISTS pitcher_idx ON historic_oba(pitcher);
 CREATE INDEX IF NOT EXISTS game_id_idx ON historic_oba(game_id);
 
-DROP TEMPORARY TABLE IF EXISTS 10game_rolling_teamBA;
+# DROP TEMPORARY TABLE IF EXISTS 10game_rolling_teamBA;
 # rolling 10 game team batting average
-CREATE TEMPORARY TABLE 10game_rolling_teamBA
+CREATE TEMPORARY TABLE IF NOT EXISTS 10game_rolling_teamBA
 SELECT game_id, team_id,
 SUM(Hit) OVER(PARTITION BY team_id ORDER BY team_id, game_id ROWS BETWEEN 11 PRECEDING AND 1 PRECEDING) / 
 SUM(atBat)OVER(PARTITION BY team_id ORDER BY team_id, game_id ROWS BETWEEN 11 PRECEDING AND 1 PRECEDING) AS "10_day_rolling_BA"
@@ -191,9 +190,9 @@ CREATE INDEX IF NOT EXISTS team_idx ON 10game_rolling_teamBA(team_id);
 CREATE INDEX IF NOT EXISTS game_id_idx ON 10game_rolling_teamBA(game_id);
 
 
-DROP TEMPORARY TABLE IF EXISTS 10game_rolling_teamRuns;
+# DROP TEMPORARY TABLE IF EXISTS 10game_rolling_teamRuns;
 # rolling 10 day average of runs scored by each team
-CREATE TEMPORARY TABLE 10game_rolling_teamRuns
+CREATE TEMPORARY TABLE IF NOT EXISTS 10game_rolling_teamRuns
 SELECT game_id, team_id,
 AVG(finalScore) OVER(PARTITION BY team_id ORDER BY team_id, game_id ROWS BETWEEN 11 PRECEDING AND 1 PRECEDING) AS "10_game_rolling_runs_scored"
 FROM team_batting_counts tbc 
@@ -203,7 +202,7 @@ CREATE INDEX IF NOT EXISTS team_idx ON 10game_rolling_teamRuns(team_id);
 CREATE INDEX IF NOT EXISTS game_id_idx ON 10game_rolling_teamRuns(game_id);
 
 # rolling 20 game bullpen whip
-DROP TEMPORARY TABLE IF EXISTS 20game_rolling_bullwhip;
+# DROP TEMPORARY TABLE IF EXISTS 20game_rolling_bullwhip;
 CREATE TEMPORARY TABLE IF NOT EXISTS 20game_rolling_bullwhip
 SELECT game_id, team_id,
 SUM(bullpenWalk + bullpenIntentWalk + bullpenHit)OVER(PARTITION BY team_id ORDER BY team_id, game_id ROWS BETWEEN 21 PRECEDING AND 1 PRECEDING) /
@@ -216,9 +215,9 @@ CREATE INDEX IF NOT EXISTS game_id_idx ON 20game_rolling_bullwhip(game_id);
 
 
 
-DROP TEMPORARY TABLE IF EXISTS rolling_season_win_pct;
+# DROP TEMPORARY TABLE IF EXISTS rolling_season_win_pct;
 # rolling win percentage for a team throughout the whole season (rolling over 162 games)
-CREATE TEMPORARY TABLE rolling_season_win_pct
+CREATE TEMPORARY TABLE IF NOT EXISTS rolling_season_win_pct
 SELECT game_id, team_id, win,
 AVG(win) OVER(PARTITION BY team_id ORDER BY team_id, game_id ROWS BETWEEN 162 PRECEDING AND 1 PRECEDING) AS "rolling_win_pct"
 FROM team_batting_counts tbc 
@@ -237,8 +236,8 @@ CREATE INDEX IF NOT EXISTS team_idx ON 20rolling_avgruns_allowed(team_id);
 CREATE INDEX IF NOT EXISTS game_id_idx ON 20rolling_avgruns_allowed(game_id);
 
 # 10 game rolling FIP
-DROP TEMPORARY TABLE IF EXISTS 10rolling_fip;
-CREATE TEMPORARY TABLE 10rolling_fip
+# DROP TEMPORARY TABLE IF EXISTS 10rolling_fip;
+CREATE TEMPORARY TABLE IF NOT EXISTS 10rolling_fip
 SELECT g.game_id, pitcher,
 SUM(Home_Run * 13 + 3 * (Hit_By_Pitch + Walk) - 2 * (Strikeout + `Strikeout_-_DP` + `Strikeout_-_TP`)) OVER (PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN 11 PRECEDING AND 1 PRECEDING) / 
 (SUM(outsPlayed / 3) OVER (PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN 11 PRECEDING AND 1 PRECEDING) + 3.2) 
@@ -252,8 +251,8 @@ CREATE INDEX IF NOT EXISTS pitcher_idx ON 10rolling_fip(pitcher);
 CREATE INDEX IF NOT EXISTS game_id_idx ON 10rolling_fip(game_id);
 
 # strikeout to walk ratio
-DROP TEMPORARY TABLE IF EXISTS 10rolling_kbb;
-CREATE TEMPORARY TABLE 10rolling_kbb
+# DROP TEMPORARY TABLE IF EXISTS 10rolling_kbb;
+CREATE TEMPORARY TABLE IF NOT EXISTS 10rolling_kbb
 SELECT g.game_id, pitcher, 
 SUM((Strikeout + `Strikeout_-_DP` + `Strikeout_-_TP`) / (NULLIF((Walk + Intent_Walk), 0))) OVER(PARTITION BY pitcher ORDER BY pitcher, g.game_id, local_date ROWS BETWEEN 11 PRECEDING AND 1 PRECEDING)
 AS "10rolling_kbb"
@@ -280,7 +279,7 @@ CREATE INDEX IF NOT EXISTS team_idx ON temperature_difference(team_id);
 
 # WIND DIFFERENCE FROM PREVIOUS GAME
 
-DROP TEMPORARY TABLE IF EXISTS wind_cleaned;
+# DROP TEMPORARY TABLE IF EXISTS wind_cleaned;
 CREATE TEMPORARY TABLE IF NOT EXISTS wind_cleaned
 SELECT g.game_id, tbc.team_id,
 REPLACE(wind, "Indoors", 0) AS wind
@@ -306,7 +305,7 @@ CREATE INDEX IF NOT EXISTS team_idx ON wind_difference(team_id);
 
 # NOW JOIN ALL TABLES TOGETHER TO ONE, IN DOING THIS, I WILL CALCULATE THE DIFFERENCE BETWEEN THE HOME AND AWAY PITCHER STATS
 # IN ORDER TO CAPTURE POSSIBLE ADVANTAGES THAT THE HOME OR AWAY TEAM HAS IN TERMS OF THEIR STARTING PITCHER.
-DROP TABLE IF EXISTS final_diff_features;
+# DROP TABLE IF EXISTS final_diff_features;
 CREATE TABLE IF NOT EXISTS final_diff_features
 SELECT g.game_id, g.home_team_id, g.away_team_id, g.home_pitcher, g.away_pitcher, YEAR(g.local_date) as `Year`,
 	   rkp9.`10_game_rolling_K/9` - rkp9a.`10_game_rolling_K/9` AS rolling_k9_diff,
@@ -369,20 +368,21 @@ ORDER BY g.game_id;
 
 
 #CREATE A TABLE WITH ALL THESE STATS BUT WITH NO TRANSFORMATIONS
-DROP TABLE IF EXISTS final_individual_features;
+# DROP TABLE IF EXISTS final_individual_features;
+/*
 CREATE TABLE IF NOT EXISTS final_individual_features
 SELECT g.game_id, g.home_team_id, g.away_team_id, g.home_pitcher, g.away_pitcher, YEAR(g.local_date) as `Year`,
 	   rkp9.`10_game_rolling_K/9` AS rolling_k9_home,
 	   rkp9a.`10_game_rolling_K/9` AS rolling_k9_away,
-	   hkp9.`K/9` AS historic_k9_home, 
+	   hkp9.`K/9` AS historic_k9_home,
 	   hkp9a.`K/9`AS historic_k9_away,
 	   rhrp9.`10_game_rolling_hr/9` AS rolling_hr9_home,
-	   rhrp9a.`10_game_rolling_hr/9` AS rolling_hr9_away, 
-	   hhrp9.`HR/9` AS historic_HR9_home, 
+	   rhrp9a.`10_game_rolling_hr/9` AS rolling_hr9_away,
+	   hhrp9.`HR/9` AS historic_HR9_home,
 	   hhrp9a.`HR/9`AS historic_hr9_away,
 	   rhp9.`10_game_rolling_h/9` AS rolling_hits9_home,
 	   rhp9a.`10_game_rolling_h/9` AS rolling_hits9_away,
-	   hhp9.`hits/9` AS historic_hits9_home, 
+	   hhp9.`hits/9` AS historic_hits9_home,
 	   hhp9a.`hits/9` AS historic_hits9_away,
 	   roba.`10_game_rolling_OBA` AS rolling_oba_home,
 	   roba1.`10_game_rolling_OBA` AS rolling_oba_away,
@@ -398,8 +398,8 @@ SELECT g.game_id, g.home_team_id, g.away_team_id, g.home_pitcher, g.away_pitcher
 	   bulla.`20_game_bullpen_whip` AS rolling_bull_whip_away,
 	   rtba.`10_day_rolling_BA` AS rolling_BA_home,
 	   rtba1.`10_day_rolling_BA` AS rolling_BA_away,
-	   rtr.`10_game_rolling_runs_scored` AS home_team_rolling_avgrunsScored, 
-	   rtr1.`10_game_rolling_runs_scored` AS away_team_rolling_avgrunsScored, 
+	   rtr.`10_game_rolling_runs_scored` AS home_team_rolling_avgrunsScored,
+	   rtr1.`10_game_rolling_runs_scored` AS away_team_rolling_avgrunsScored,
 	   rra.`20rolling_avgruns_allowed` AS home_team_rolling_avgrunsAllowed,
 	   rraa.`20rolling_avgruns_allowed` AS away_team_rolling_avgrunsAllowed,
 	   rwpcth.rolling_win_pct AS home_team_win_pct,
@@ -451,7 +451,7 @@ JOIN temperature_difference 		tempda 		ON g.game_id = tempda.game_id AND g.away_
 JOIN wind_difference				windh 		ON g.game_id = windh.game_id AND g.home_team_id = windh.team_id
 JOIN wind_difference 				winda 		ON g.game_id = winda.game_id AND g.away_team_id = winda.team_id
 ORDER BY g.game_id;
-
+*/
 
 
 

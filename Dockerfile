@@ -7,7 +7,6 @@ RUN apt-get update \
      python3-pip \
      python3-dev
 
-
 COPY requirements.txt .
 RUN pip3 install --compile --no-cache-dir -r requirements.txt
 

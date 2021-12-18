@@ -58,6 +58,8 @@ def random_forest(x_train, x_test, retrain=False, model_path="models/rf_tuned.sa
     # print("running randomized search for forest...")
     # search = RandomizedSearchCV(rf, random_grid, cv=tscv)
     rf.fit(x_train, x_test)
+    if not os.path.exists("models"):
+        os.makedirs("models")
     pickle.dump(rf, open(model_path, "wb"))
     return rf
 
@@ -68,6 +70,8 @@ def svc(x_train, x_test, retrain=False, model_path="models/svc_tuned.sav"):
         model = pickle.load(open(model_path, "rb"))
         return model
 
+    if not os.path.exists("models"):
+        os.makedirs("models")
     clf = svm.SVC()
     # param_grid = {
     #     "C": [0.1, 1, 10],
@@ -87,7 +91,8 @@ def logit(x_train, x_test, retrain=False, model_path="models/tuned_logit.sav"):
         print("using saved model")
         model = pickle.load(open(model_path, "rb"))
         return model
-
+    if not os.path.exists("models"):
+        os.makedirs("models")
     clf = LogisticRegression(random_state=1)
     LRparam_grid = {
         "C": [0.001, 0.01, 0.1, 1, 10, 100],
@@ -171,7 +176,7 @@ def main():
     # df = pd.read_sql_query(query, sql_engine)
 
     # db is the name of the service of the mariadb container in the compose file
-    connect_string = "mysql+mysqlconnector://root:example@db:3306/baseball"  # pragma: allowlist secret
+    connect_string = "mysql+mysqlconnector://root:password@db:3306/baseball"  # pragma: allowlist secret
 
     # the first time connecting to the mariadb connector, it will take a few minutes to
     # connect (due to inserting and reading baseball.sql database), this loop will continue to try to
@@ -189,7 +194,7 @@ def main():
             break
         except Exception:
             print("connection failed, sleeping then retrying...")
-            time.sleep(590)
+            time.sleep(300)
 
     # there are some empty strings in our response (exhibition game ending in a tie) drop these rows
     baseball_df = df[df["winner_home_or_away"] != ""]
