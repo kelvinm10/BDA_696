@@ -351,6 +351,7 @@ def run_main_rankings(dataframe, predictors, response):
             "RF Variable Importance",
         ],
     )
+    result.sort_values(by=["Weighted DMR"], inplace=True, ascending=False)
     if not os.path.exists("finalTables"):
         os.makedirs("finalTables")
 
