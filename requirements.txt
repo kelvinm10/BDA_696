@@ -20,7 +20,7 @@ matplotlib==3.4.3
     # via seaborn
 mysql-connector-python-rf==2.2.2
     # via -r requirements.in
-numpy==1.21.2
+numpy==1.20.3
     # via
     #   -r requirements.in
     #   matplotlib

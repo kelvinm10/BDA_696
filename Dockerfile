@@ -15,11 +15,11 @@ COPY Assignments/assignment4.py .
 COPY Assignments/midterm.py .
 COPY Assignments/cat_correlation.py .
 COPY Assignments/hw4_data.py .
-COPY Assignments/assignment5.py .
-COPY Assignments/assignment5sql.sql .
+COPY Assignments/final.py .
+COPY Assignments/finalsql.sql .
 
 RUN mkdir finalTables/
 
 
-CMD ["python", "assignment5.py"]
+CMD ["python", "final.py"]
 
