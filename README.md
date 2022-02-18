@@ -20,6 +20,13 @@
 
 `pre-commit run --all-files`
 
+## Final:
+
+- docker-compose up will run the final code
+- all results will be added to a "finalResults" folder
+- Add the "baseball.sql" database file in the root of the project
+- I had some last minute issues running bash scripts from my dockerfile, so I had to revert to adding a sleep funciton in my python code and running the sql scripts as initializaton files
+
 ## Midterm:
 
 - main function takes in 3 parameters: pandas dataframe, list of predictor names (strings), and name of response (string)

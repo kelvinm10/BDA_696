@@ -10,10 +10,12 @@ appnope==0.1.2
     # via
     #   ipykernel
     #   ipython
-argon2-cffi==21.1.0
+argon2-cffi==21.3.0
     # via
     #   jupyter-server
     #   notebook
+argon2-cffi-bindings==21.2.0
+    # via argon2-cffi
 attrs==21.2.0
     # via jsonschema
 babel==2.9.1
@@ -22,17 +24,17 @@ backcall==0.2.0
     # via ipython
 backports.entry-points-selectable==1.1.1
     # via virtualenv
-black==21.11b1
+black==21.12b0
     # via -r requirements.dev.in
 bleach==4.1.0
     # via nbconvert
 certifi==2021.10.8
     # via requests
 cffi==1.15.0
-    # via argon2-cffi
+    # via argon2-cffi-bindings
 cfgv==3.3.1
     # via pre-commit
-charset-normalizer==2.0.8
+charset-normalizer==2.0.9
     # via requests
 click==8.0.3
     # via
@@ -46,7 +48,7 @@ defusedxml==0.7.1
     # via nbconvert
 detect-secrets==1.1.0
     # via -r requirements.dev.in
-distlib==0.3.3
+distlib==0.3.4
     # via virtualenv
 entrypoints==0.3
     # via
@@ -65,7 +67,7 @@ idna==3.3
     #   requests
 ipykernel==6.6.0
     # via notebook
-ipython==7.30.0
+ipython==7.30.1
     # via
     #   ipykernel
     #   jupyterlab
@@ -87,7 +89,7 @@ jinja2==3.0.3
     #   notebook
 json5==0.9.6
     # via jupyterlab-server
-jsonschema==4.2.1
+jsonschema==4.3.1
     # via
     #   jupyterlab-server
     #   nbformat
@@ -105,16 +107,16 @@ jupyter-core==4.9.1
     #   nbconvert
     #   nbformat
     #   notebook
-jupyter-server==1.12.1
+jupyter-server==1.13.1
     # via
     #   jupyterlab
     #   jupyterlab-server
     #   nbclassic
-jupyterlab==3.2.4
+jupyterlab==3.2.5
     # via -r requirements.dev.in
 jupyterlab-pygments==0.1.2
     # via nbconvert
-jupyterlab-server==2.8.2
+jupyterlab-server==2.9.0
     # via jupyterlab
 markupsafe==2.0.1
     # via jinja2
@@ -182,7 +184,7 @@ prometheus-client==0.12.0
     # via
     #   jupyter-server
     #   notebook
-prompt-toolkit==3.0.23
+prompt-toolkit==3.0.24
     # via ipython
 ptyprocess==0.7.0
     # via
@@ -216,8 +218,6 @@ pyzmq==22.3.0
     #   jupyter-client
     #   jupyter-server
     #   notebook
-regex==2021.11.10
-    # via black
 requests==2.26.0
     # via
     #   detect-secrets
@@ -241,7 +241,7 @@ testpath==0.5.0
     # via nbconvert
 toml==0.10.2
     # via pre-commit
-tomli==1.2.2
+tomli==1.2.3
     # via
     #   black
     #   pep517
@@ -275,7 +275,7 @@ wcwidth==0.2.5
     # via prompt-toolkit
 webencodings==0.5.1
     # via bleach
-websocket-client==1.2.1
+websocket-client==1.2.3
     # via jupyter-server
 wheel==0.37.0
     # via pip-tools
